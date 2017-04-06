@@ -1,0 +1,121 @@
+apply plugin: 'com.android.application'
+	
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.12.+'
+    }
+}
+
+	def releaseTime() {
+         return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+   }
+
+dependencies {
+    compile fileTree(dir: 'libs', include: '*.jar')
+    
+    compile 'tv.danmaku.ijk.media:ijkplayer-java:0.7.8.1'
+    compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.7.8.1'
+
+    # Other ABIs: optional
+    compile 'tv.danmaku.ijk.media:ijkplayer-armv5:0.7.8.1'
+    compile 'tv.danmaku.ijk.media:ijkplayer-arm64:0.7.8.1'
+    compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.7.8.1'
+    compile 'tv.danmaku.ijk.media:ijkplayer-x86_64:0.7.8.1'
+
+    # ExoPlayer as IMediaPlayer: optional, experimental
+    compile 'tv.danmaku.ijk.media:ijkplayer-exo:0.7.8.1'
+
+}
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
+    
+    defaultConfig {
+        //applicationId "com.hello.*"
+       // minSdkVersion 14
+        //targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+        //multiDexEnabled true
+        manifestPlaceholders = [UMENG_CHANNEL_VALUE: "umeng"]
+     }
+    
+    signingConfigs {
+	        myConfig {
+	            storeFile file("E:\\keystores_test\\zkjs.keystore")
+	 	        storePassword "123456"
+	 	        keyAlias "zkjs"
+	 	       keyPassword "123456"
+	        }
+     }
+   
+    
+    buildTypes {
+    	 debug{
+    	   	    runProguard false	
+    	   	     proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+    	   	}
+    	
+        release {
+           signingConfig signingConfigs.myConfig
+           //执行混淆
+           runProguard true
+           proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+	       //不显示Log
+	       buildConfigField "boolean","LOG_DEBUG","false"
+        }
+    }
+    
+    productFlavors {
+    	 guanwang {    }  
+//         baidu { }  
+//         xiaomi {  }  
+//         wandoujia {  }  
+//         yingyongbao {  }  
+//         huawei {  }    
+//    	 wandoujia {}
+//    	 baidu {}
+//    	 c360 {}
+//    	 uc {}
+    	  
+    	productFlavors.all { flavor ->
+    	    flavor.manifestPlaceholders = [UMENG_CHANNEL_ID: name]
+    	}
+   }    
+    lintOptions {
+        abortOnError false
+     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+
+        // Move the tests to tests/java, tests/res, etc...
+        instrumentTest.setRoot('tests')
+
+        // Move the build types to build-types/<type>
+        // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
+        // This moves them out of them default location under src/<type>/... which would
+        // conflict with src/ being used by the main source set.
+        // Adding new build types or product flavors should be accompanied
+        // by a similar customization.
+        debug.setRoot('build-types/debug')
+        release.setRoot('build-types/release')
+    }
+}
