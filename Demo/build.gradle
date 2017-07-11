@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 
-//注释 脚本
+//注释 脚本	   hello eveyone
 	
 buildscript {
     repositories {
