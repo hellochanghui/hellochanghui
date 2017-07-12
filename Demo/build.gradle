@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 
 //注释 脚本	   hello eveyone
+
+//git branch testing.
 	
 buildscript {
     repositories {
